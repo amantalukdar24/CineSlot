@@ -1,0 +1,177 @@
+import ADMIN from "../models/admin";
+import OTP from "../models/otp";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import bcrypt    from "bcrypt";
+import nodemailer from "nodemailer";
+import { Request,Response } from "express";
+dotenv.config();
+
+const registerAdmin=async (req:Request,res:Response)=>{
+    try{
+          const {name,email,address,finalOtp} =req.body;
+           const existEmail=await ADMIN.findOne({email});
+           if(existEmail) return res.status(409).json({success:false,mssg:"Email Exist"});
+           const otpMatch=await OTP.findOne({email});
+         if(!otpMatch) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
+            const hashOtp=await bcrypt.compare(finalOtp,otpMatch.otp);
+            
+            if(!hashOtp) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
+             
+            const admin=await ADMIN.create({
+                name,
+                email,
+               address:JSON.parse(address)
+            });
+         if(admin) {
+            
+            const token=await jwt.sign({_id:admin._id,name:admin.name,email:admin.email,address:admin.address},process.env.JWT_KEY as string);
+             await OTP.findOneAndDelete({email});
+            return res.status(201).json({success:true,mssg:"Admin Account Created",token});
+         }
+         return res.status(400).json({success:false,mssg:"Something went wrong"});
+
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).json({success:false,mssg:"Internal Server Error"});
+    }
+}
+
+const getOtp=async (req:Request,res:Response):Promise<any>=>{
+    try {
+      
+        const {email,mode}=req.body;
+
+        if(mode==="signin"){
+            const existEmail=await ADMIN.findOne({email});
+    if(!existEmail) return res.status(409).json({success:false,mssg:"Admin's Email didn't Exist Signup"});
+        }
+            if(mode==="signup"){
+            const existEmail=await ADMIN.findOne({email});
+    if(existEmail) return res.status(409).json({success:false,mssg:"Admin's Email Exist Signin"});
+        }
+    let otp:string="";
+    for(let i=0;i<4;i++){
+      otp+=Math.floor(Math.random()*10);
+    }
+    const transporter=nodemailer.createTransport({
+        service:"gmail",
+        auth:{
+            user:process.env.NM_email,
+            pass:process.env.NM_pass
+        }
+    });
+    const mailOptions = {
+  from: process.env.NM_email,
+  to:email,
+  subject: "CineSlot-For Staffs | Email Verification OTP",
+  html: `
+  <div style="max-width:600px; margin:0 auto; padding:20px; font-family:Arial, sans-serif; background-color:#f9f9f9;">
+    
+    <h1 style="color:orangered; text-align:center;">
+      🎬 Welcome to CineSlot!
+    </h1>
+
+    <p style="font-size:16px; color:#333;">
+      Hi there,
+    </p>
+
+    <p style="font-size:16px; color:#333;">
+      Thank you for signing up on <strong>CineSlot</strong>.  
+      Please use the OTP below to verify your email address.
+    </p>
+
+    <div style="margin:30px 0; text-align:center;">
+      <span style="
+        display:inline-block;
+        padding:15px 30px;
+        font-size:24px;
+        letter-spacing:5px;
+        font-weight:bold;
+        background-color:#fff;
+        color:#000;
+        border:2px dashed orangered;
+        border-radius:8px;
+      ">
+        ${otp}
+      </span>
+    </div>
+
+    <p style="font-size:14px; color:#555;">
+      This OTP is valid for <strong>10 minutes</strong>.  
+      Do not share it with anyone.
+    </p>
+
+    <p style="font-size:14px; color:#555;">
+      If you didn’t request this, you can safely ignore this email.
+    </p>
+
+    <hr style="margin:30px 0;" />
+
+    <p style="font-size:12px; color:#999; text-align:center;">
+      © ${new Date().getFullYear()} CineSlot. All rights reserved.
+    </p>
+  </div>
+  `
+};
+
+  await  transporter.sendMail(mailOptions);
+
+    const hashedOtp:string=await bcrypt.hash(otp,10);
+    const existOtp=await OTP.findOne({email});
+    if(existOtp){
+         const result=await OTP.findByIdAndUpdate(existOtp._id,{
+            otp:hashedOtp
+         });
+         if(result) return res.status(201).json({success:true,mssg:"Otp has been sent to your email"});
+    }
+    else{
+        const result=await OTP.create({
+            email,
+            otp:hashedOtp
+        });
+if(result) return res.status(201).json({success:true,mssg:"Otp has been sent to your email"});
+    }
+    return res.status(404).json({success:false,mssg:"Something went wrong"});
+    
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({success:false,mssg:"Internal Server Error"});
+    }
+}
+
+const loginAdmin=async (req:Request,res:Response):Promise<any>=>{
+    try {
+         const {email,finalOtp}=req.body;
+     
+    const admin=await ADMIN.findOne({email});
+    if(!admin) return res.status(409).json({success:false,mssg:"Admin's Email didn't Exist Signup"});
+     const otpMatch=await OTP.findOne({email});
+    if(!otpMatch) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
+    const hashOtp=await bcrypt.compare(finalOtp,otpMatch.otp);
+    if(!hashOtp) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
+    const token=await jwt.sign({_id:admin._id,name:admin.name,email:admin.email,address:admin.address},process.env.JWT_KEY as string);
+    if(token){
+    await OTP.deleteOne({email});
+    return res.status(200).json({success:true,mssg:"Welcome Back!",token});
+    }
+    return res.status(404).json({success:false,mssg:"Something went wrong"});
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({success:false,mssg:"Internal Server Error"});
+    }
+}
+const getAccountDetails=async (req:Request,res:Response):Promise<any>=>{
+  try {
+    const id=req.user?._id;
+    const user=await ADMIN.findById(id);
+    if(!user) return res.status(400).json({success:false,mssg:"Accout Not Found"})
+    return res.status(200).json({success:true,user});
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({success:false,mssg:"Internal Server Error"});
+  }
+}
+export {registerAdmin,getOtp,loginAdmin,getAccountDetails};

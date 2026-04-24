@@ -1,0 +1,25 @@
+import express, { urlencoded } from "express";
+import dbConfig from "./dbconfig";
+import dotenv from "dotenv";
+import movieRouter from "./routes/movie";
+import showRouter from "./routes/show";
+import seatBookRouter from "./routes/seatBooking";
+import paymentRouter from "./routes/payment";
+import bookingRouter from "./routes/bookings";
+import cors from "cors";
+const PORT:number=Number(process.env.PORT) || 4001;
+dotenv.config();
+const app=express();
+dbConfig();
+app.use(urlencoded());
+app.use(cors());
+app.use(express.json());
+app.use(express.text());
+app.use("/movie",movieRouter);
+app.use("/show",showRouter);
+app.use("/seatbook",seatBookRouter);
+app.use("/payment",paymentRouter);
+app.use("/bookings",bookingRouter);
+app.listen(PORT,()=>{
+    console.log(`Server Running on port:${PORT}`);
+});

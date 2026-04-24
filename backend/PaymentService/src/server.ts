@@ -1,0 +1,13 @@
+import express, { urlencoded } from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import paymentRouter from "./routes/payment";
+import sendMail from "./services/sendMail";
+dotenv.config();
+const PORT:number=Number(process.env.PORT) || 4002;
+const app=express();
+app.use(urlencoded());
+app.use(cors());
+sendMail();
+app.use("/payment",paymentRouter);
+app.listen(PORT,()=>{console.log(`Payment Server Running on PORT:${PORT}`)});
