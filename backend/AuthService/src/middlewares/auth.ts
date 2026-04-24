@@ -1,7 +1,7 @@
 import jwt,{JwtPayload} from "jsonwebtoken";
-import {config as dotenv} from "dotenv";
+import dotenv from "dotenv";
 import { Request,Response,NextFunction} from "express";
-
+dotenv.config();
 async function authUser(req:Request,res:Response,next:NextFunction):Promise<any>{
    try {
      const token:string | undefined=req.headers["authorization"];

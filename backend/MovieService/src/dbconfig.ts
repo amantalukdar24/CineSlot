@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 function dbConfig():void{
- mongoose.connect(process.env.MongoURL as string)
+ const MongoURL=process.env.MongoURL as string;
+ if(MongoURL){
+   console.log("Mongo Url not found");
+   return;
+ }
+ mongoose.connect(MongoURL)
  .then(()=>{
     console.log("Mongo-MS connected");
  })

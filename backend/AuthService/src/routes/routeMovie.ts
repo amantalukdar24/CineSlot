@@ -2,7 +2,7 @@ import {RequestHandler, Router} from "express";
 import {config as dotenv} from "dotenv";
 import multer from "multer";
 import {v2 as cloudinary} from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
+import {CloudinaryStorage} from "multer-storage-cloudinary";
 import { authUser } from "../middlewares/auth";
 import { routeCreate,routeGetMovies,routeGetMovie,routeUpdate,routeEditCoverImage } from "../controllers/routeMovie";
 const router=Router();

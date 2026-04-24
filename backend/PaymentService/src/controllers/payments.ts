@@ -1,6 +1,8 @@
 import { Request,Response } from "express";
 import createRazorpayInstance from "../razorpayConfig";
 import crypto from "crypto";
+import dotenv from "dotenv";
+dotenv.config();
 const razorpayInstance=createRazorpayInstance();
 
 const createOrder=async (req:Request,res:Response):Promise<any>=>{

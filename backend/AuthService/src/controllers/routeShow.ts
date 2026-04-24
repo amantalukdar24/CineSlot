@@ -1,6 +1,6 @@
 import {Request,Response} from "express";
-import {config as dotenv} from "dotenv";
-
+import dotenv from "dotenv";
+dotenv.config();
 const registerShow=async (req:Request,res:Response):Promise<any>=>{
 try {
      

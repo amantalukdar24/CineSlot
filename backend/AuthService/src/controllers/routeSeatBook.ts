@@ -1,5 +1,6 @@
 import {Request,Response} from "express";
-import {config as dotenv} from "dotenv";
+import dotenv from "dotenv";
+dotenv.config();
 const checkSeatAvaiable=async (req:Request,res:Response):Promise<any>=>{
     try {
         const {forDate,movieId,time,seats}=req.body;

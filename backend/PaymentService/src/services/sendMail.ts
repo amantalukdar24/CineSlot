@@ -1,4 +1,4 @@
-import amqp from "amqplib";
+
 import nodemailer from "nodemailer";
 import { datetoString } from "./date";
 import { connectRabbitMQ } from "../amqpConfig";
