@@ -1,5 +1,5 @@
 "use client";
-import {useState,useEffect} from 'react';
+import {useState,useEffect,Suspense} from 'react';
 import {toast} from "react-hot-toast";
 import { useRouter,useSearchParams } from 'next/navigation';
 import { MoviesI } from '../pages/Home';
@@ -15,7 +15,7 @@ const items={
    hidden:{opacity:0,x:-30},
   visible:{opacity:1,x:0}
 }
-function Page() {
+function MovieContent() {
     const MovieServiceUrl:string=process.env.NEXT_PUBLIC_MovieService_URL as string;
     const [movie,setMovie]=useState<MoviesI | null>(null);
     const [viewMore,setViewMore]=useState<boolean>(false);
@@ -93,4 +93,10 @@ function Page() {
 )
 }
 
-export default Page
+export default function Page() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <MovieContent />
+    </Suspense>
+  );
+}

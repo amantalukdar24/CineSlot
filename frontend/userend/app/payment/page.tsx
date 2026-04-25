@@ -1,5 +1,5 @@
 "use client";
-import {useState,useEffect} from 'react'
+import {useState,useEffect,Suspense} from 'react'
 import { useSearchParams,useRouter } from 'next/navigation'
 import {toast,Toaster} from "react-hot-toast";
 import {datetoString } from '../services/date';
@@ -7,7 +7,7 @@ import {motion} from "framer-motion";
 import Spinner from '../component/Spinner';
 import PaymentS from '../component/skeletons/Payment';
 import { AuthUser } from '../services/auth';
-function Page() {
+function PaymentContent() {
   const AuthService_Url=process.env.NEXT_PUBLIC_AuthSer_URL as string;
   const searchParams=useSearchParams();
   const router=useRouter();
@@ -265,5 +265,10 @@ useEffect(()=>{
 
   )
 }
-
-export default Page
+export default function Page() {
+  return (
+    <Suspense fallback={<PaymentS />}>
+      <PaymentContent />
+    </Suspense>
+  );
+}

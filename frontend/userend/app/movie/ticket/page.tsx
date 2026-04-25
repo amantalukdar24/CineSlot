@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from 'react';
+import {useEffect,useState,Suspense} from 'react';
 import { useSearchParams,useRouter } from 'next/navigation';
 import {toast,Toaster} from "react-hot-toast"
 import { getDay,getDate,getMonthYear } from '@/app/services/date';
@@ -13,7 +13,7 @@ interface showsTimesI{
   forDate:Date,
   times:string[]
 }
-function Page() {
+function TicketContent() {
   const MovieService_Url:string=process.env.NEXT_PUBLIC_MovieService_URL as string;
   const AuthService_Url:string=process.env.NEXT_PUBLIC_AuthSer_URL as string;
   const searchparams=useSearchParams();
@@ -203,4 +203,10 @@ const selected = showsTimes?.find(ele => ele._id === currentClickedDay);
   )
 }
 
-export default Page
+export default function Page() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <TicketContent />
+    </Suspense>
+  );
+}

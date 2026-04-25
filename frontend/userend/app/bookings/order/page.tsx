@@ -1,5 +1,5 @@
 "use client";
-import {useState,useEffect,FC} from "react";
+import {useState,useEffect,FC,Suspense} from "react";
 import { useRouter,useSearchParams } from "next/navigation";
 import { paymentDetailsI } from "@/app/payment/success/page";
 import {toast} from "react-hot-toast";
@@ -19,7 +19,7 @@ const poppins=Poppins({
 const sanscode=Google_Sans_Code({
     subsets:["latin"],weight:"400"
 })
-function Page(){
+function OrderContent(){
     const searchParams=useSearchParams();
     const router=useRouter();
     const AuthService_URL:string=process.env.NEXT_PUBLIC_AuthSer_URL as string;
@@ -132,4 +132,10 @@ function Page(){
         </div>
     )
 }
-export default Page;
+export default function Page() {
+    return (
+        <Suspense fallback={<PageLoader />}>
+            <OrderContent />
+        </Suspense>
+    );
+}

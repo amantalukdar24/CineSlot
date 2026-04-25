@@ -1,5 +1,5 @@
 "use client";
-import {useState,useEffect} from 'react'
+import {useState,useEffect,Suspense} from 'react'
 import { useRouter,useSearchParams } from 'next/navigation';
 import {toast} from "react-hot-toast";
 import {  datetoString,get12hrTime } from '@/app/services/date';
@@ -11,7 +11,7 @@ interface paymentDetailsI{
    seats:string[],amountPaid:number,movie:{name:string,coverImage:{url:string}},dates:{forDate:Date}
 }
 export type {paymentDetailsI};
-function Page() {
+function SuccessContent() {
   const AuthService_URL=process.env.NEXT_PUBLIC_AuthSer_URL;
     const router=useRouter();
     const searchParams=useSearchParams();
@@ -86,5 +86,10 @@ function Page() {
     </div>
   )
 }
-
-export default Page
+export default function Page() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <SuccessContent />
+    </Suspense>
+  );
+}
