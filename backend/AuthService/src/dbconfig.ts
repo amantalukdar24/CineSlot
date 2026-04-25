@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 dotenv.config();
 function dbConfig():void{
     const MongoUrl=process.env.MongoUrl as string;
-    console.log(MongoUrl);
     if(!MongoUrl) {
         console.log("Mongo Url not found");
 
