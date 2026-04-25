@@ -1,0 +1,6 @@
+
+cd frontend/adminend && npm run dev
+cd frontend/userend && npm run dev
+cd backend/AuthService && npm run dev
+cd backend/MovieService && npm run dev
+cd backend/PaymentService && npm run dev
