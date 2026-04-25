@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams,useRouter } from 'next/navigation';
 import {currentMoviesI} from "../pages/Home"
-import {useState,useEffect} from 'react';
+import {useState,useEffect, Suspense} from 'react';
 import {toast} from 'react-hot-toast';
 import Addtimeform from './addtimeform';
 import SelectShow from './selectShow';
@@ -18,7 +18,7 @@ const items={
    hidden:{opacity:0,x:-30},
   visible:{opacity:1,x:0}
 }
-function page() {
+function MovieContent() {
     const url=process.env.NEXT_PUBLIC_AuthSer_URL;
     const searchParams = useSearchParams();
     const id:string|null=searchParams.get("id");
@@ -141,5 +141,10 @@ useEffect(()=>{
     </div>
   )
 }
-
-export default page
+export default function page() {
+  return (
+    <Suspense fallback={<PageLoader/>}>
+      <MovieContent />
+    </Suspense>
+  )
+}

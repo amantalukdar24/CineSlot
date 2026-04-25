@@ -1,5 +1,5 @@
 "use client";
-import {useState,useEffect} from "react";
+import {useState,useEffect,Suspense} from "react";
 import {toast} from "react-hot-toast";
 import {useRouter,useSearchParams} from "next/navigation";
 import { Poppins,Google_Sans_Code } from "next/font/google";
@@ -12,7 +12,7 @@ const poppins=Poppins({
 const sanscode=Google_Sans_Code({
     subsets:["latin"],weight:"300"
 })
-function Page(){
+function ShowsContent(){
     const router=useRouter();
     const searchparams=useSearchParams();
     const AuthService:string=process.env.NEXT_PUBLIC_AuthSer_URL as string;
@@ -121,5 +121,10 @@ function Page(){
         </div>
     )
 }
-
-export default Page
+export default function Page() {
+    return (
+        <Suspense fallback={<PageLoader/>}>
+            <ShowsContent />
+        </Suspense>
+    )
+}
