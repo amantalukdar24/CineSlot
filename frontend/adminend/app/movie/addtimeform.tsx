@@ -3,6 +3,7 @@ import {currentMoviesI} from "../pages/Home"
 import { convertTimeto12 } from '../services/date'
 import {toast} from "react-hot-toast";
 import {motion} from "framer-motion";
+import Spinner from '../component/Spinner';
 interface PropsI{
   setShowAddTime:React.Dispatch<React.SetStateAction<boolean>>,
   movie:currentMoviesI
@@ -14,6 +15,7 @@ const endDate= new Date(movie?.dates.end).toISOString().split("T")[0];
 const [forDate,setForDate]=useState<string>("");
 const [times,setTimes]=useState<string[]>([]);
 const [currentTime,setCurrentTime]=useState<string>("");
+const [loading,setLoading]=useState<boolean>(false);
 const handleAddTime=():void=>{
   if(currentTime.length<=0) return;
    const dummyTimes=Array.from(new Set([...times,convertTimeto12(currentTime)]));
@@ -27,6 +29,7 @@ const handleRemovetime=(time:string):void=>{
    setTimes(dummyTimes)
 }
 const handleSubmit=async ()=>{
+  if(loading) return;
   if(forDate.length===0 || times.length<=0) return;
   const sendData={
      forDate:forDate,
@@ -34,6 +37,7 @@ const handleSubmit=async ()=>{
      movieId:movie._id
 
   };
+  setLoading(true);
   const result=await fetch(`${url}/show/create`,{
     method:"POST",
     headers:{
@@ -50,6 +54,7 @@ const handleSubmit=async ()=>{
   else{
     toast.error(data.mssg)
   }
+  setLoading(false);
 }
   return (
     <motion.div initial={{opacity:0,scale:0.8,y:-50}} animate={{opacity:1,scale:1,y:0}} exit={{opacity:0,scale:0.8,y:50}} transition={{duration:0.3,ease:"easeInOut"}}  className='absolute top-1/2 left-1/2 transform translate-[-50%] w-[80vw]  sm:w-[70vw] md:w-[60vw] lg:w-[50vw]   xl:w-[40vw] h-[65vh] rounded-xl bg-gray-700 flex flex-col  gap-2'>
@@ -79,7 +84,7 @@ const handleSubmit=async ()=>{
       }
      </div>}
        <div className='flex justify-center items-center mt-10 '>
-                <motion.button whileTap={{scale:0.8}} transition={{duration:0.15,ease:"easeIn"}} onClick={()=>{handleSubmit()}} className='w-[30vw] sm:w-[25vw] md:w-[20vw] lg:w-[15vw] h-[5vh] bg-blue-500 text-white font-mono text-[1.3rem] lg:text-[1.5rem] rounded-2xl cursor-pointer'>Submit</motion.button>
+                <motion.button whileTap={{scale:0.8}} transition={{duration:0.15,ease:"easeIn"}} onClick={()=>{handleSubmit()}} className={`w-[30vw] sm:w-[25vw] md:w-[20vw] lg:w-[15vw] h-[5vh] ${loading? "bg-blue-200": "bg-blue-500"} text-white font-mono text-[1.3rem] lg:text-[1.5rem] rounded-2xl cursor-pointer flex justify-center items-center`}>{!loading ? "Submit" : <Spinner/> }</motion.button>
        </div>
       </div>
        

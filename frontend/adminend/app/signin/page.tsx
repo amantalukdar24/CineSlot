@@ -71,7 +71,7 @@ function Signin() {
     const finalOtp=otp.join("");
     if(email==="") {
       toast.error("Enter the valid email");
-      return;
+     return;
     }
     if(finalOtp.length<4) {
       toast.error("Fill the otp box");

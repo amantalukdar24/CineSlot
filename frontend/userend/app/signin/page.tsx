@@ -68,10 +68,12 @@ function Signin() {
     const finalOtp=otp.join("");
     if(email==="") {
       toast.error("Enter the valid email");
+      setLoading(false);
       return;
     }
     if(finalOtp.length<4) {
       toast.error("Fill the otp box");
+      setLoading(false);
       return;
     }
   
@@ -117,7 +119,7 @@ useEffect(() => {
       background: '#363636',
       color: '#fff',
     },}} />
-      <div className='w-[80vw]   sm:w-[70vw] md:w-[60vw] lg:w-[50vw]   xl:w-[40vw]  lg:h-[60vh] flex flex-col  border-2 rounded-[40px] sm:rounded-[50px] shadow-[0.8px_8px_25px] shadow-blue-500  bg-gray-700 p-4'>
+      <div className='w-[80vw]   sm:w-[70vw] md:w-[60vw] lg:w-[50vw]   xl:w-[40vw]   lg:h-[60vh] flex flex-col  border-2 rounded-[40px] sm:rounded-[50px] shadow-[0.8px_8px_25px] shadow-blue-500  bg-gray-700 p-4'>
        <div className='w-full flex flex-row items-center'>
     <button className='text-[1.3rem] md:text-[1.5rem] lg:text-[1.7rem] xl:text-[1.8rem] w-[3vw] h-[6vh] cursor-pointer font-mono text-white' onClick={()=>{step==1 ? router.push("/"): setStep(step-1)}} >{`<`}</button>
        <h1 className='w-full text-[1.5rem] md:text-[1.7rem] lg:text-[1.9rem]  xl:text-[2rem] font-mono text-[#ada5a5] text-center'>Sign in</h1>

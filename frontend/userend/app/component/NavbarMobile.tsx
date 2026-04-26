@@ -35,6 +35,9 @@ useEffect(() => {
             setSearch(true);
             return;
         }
+        if(name==='Home'){
+          setSearch(false);
+        }
       router.push(link);
     }
 
@@ -61,13 +64,13 @@ useEffect(() => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   return (
-    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.1,ease:"linear"}} className={`w-full px-2 py-3  bg-white border-2 rounded-xl  sm:hidden bottom-0 fixed ${isBottom? "hidden":""}`}>
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.1,ease:"linear"}} className={`w-[98%] px-2 py-3 mx-1  my-0.5 bg-white border-2 rounded-xl  sm:hidden bottom-0 fixed ${isBottom? "hidden":""}`}>
           <motion.div variants={container as any} initial="hidden" animate="visible"   className='flex flex-row justify-evenly items-center'>
                {
                  menu.map((item)=>(
                     <motion.div variants={list}  key={item.name} className=" flex flex-col gap-2 items-center" onClick={()=>{handleAction(item.name,item.link)}}>
-                        <img src={item.icon} className='w-7.5 h-7.5 rounded-md'/>
-                        <span className={`${item.link === pathname && !search ? "text-orange-500 font-medium" : item.name==="Search" && search ? "text-orange-500 font-medium" : " font-normal"  } font-serif text-[1rem] `}>{item.name}</span>
+                        <img src={item.icon} className='w-5 h-5 rounded-md'/>
+                        <span className={`${item.link === pathname && !search ? "text-rose-500 font-medium" : item.name==="Search" && search ? "text-rose-500 font-medium" : " font-normal"  } font-serif text-[0.8rem] `}>{item.name}</span>
                     </motion.div> 
                  ))
                }

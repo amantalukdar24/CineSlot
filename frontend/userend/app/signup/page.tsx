@@ -72,10 +72,12 @@ function Signup() {
     const finalOtp=otp.join("");
     if(email==="") {
       toast.error("Enter the valid email");
+      setLoading(false);
       return;
     }
     if(finalOtp.length<4) {
       toast.error("Fill the otp box");
+      setLoading(false);
       return;
     }
   
