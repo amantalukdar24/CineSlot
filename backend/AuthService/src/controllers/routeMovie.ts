@@ -26,7 +26,7 @@ const routeCreate=async (req:Request,res:Response):Promise<any>=>{
         dates
         
        }
-       console.log(process.env.MovieService_Url,finalData,coverImage);
+       
        const result=await fetch(`${process.env.MovieService_Url}/movie/create`,{
         method:"POST",
         headers:{
