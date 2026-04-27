@@ -1,4 +1,4 @@
-import express, { urlencoded } from "express";
+import express, { urlencoded,Request,Response } from "express";
 import dbConfig from "./dbconfig";
 import dotenv from "dotenv";
 import movieRouter from "./routes/movie";
@@ -15,6 +15,15 @@ app.use(urlencoded());
 app.use(cors());
 app.use(express.json());
 app.use(express.text());
+app.get("/",async (req:Request,res:Response):Promise<any>=>{
+    try {
+        return res.status(200).json({success:true,mssg:"Server Waked Up!"});
+        
+    } catch (err) {
+         console.log(`${err}`);
+         return res.status(500).json({success:false,mssg:"Internal Server Down"});
+    }
+});
 app.use("/movie",movieRouter);
 app.use("/show",showRouter);
 app.use("/seatbook",seatBookRouter);

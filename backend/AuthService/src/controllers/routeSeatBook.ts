@@ -1,12 +1,11 @@
 import {Request,Response} from "express";
-import { fetchWithRetry } from "../utils/fetchWithRetry";
 import dotenv from "dotenv";
 dotenv.config();
 const checkSeatAvaiable=async (req:Request,res:Response):Promise<any>=>{
     try {
         const {forDate,movieId,time,seats}=req.body;
         const userId=req.user?._id;
-        const result=await fetchWithRetry(`${process.env.MovieService_Url}/seatbook/checkseat`,{
+        const result=await fetch(`${process.env.MovieService_Url}/seatbook/checkseat`,{
             method:"POST",
             headers:{
                 "Content-Type":"application/x-www-form-urlencoded"
@@ -26,7 +25,7 @@ const removeSeats=async (req:Request,res:Response):Promise<any>=>{
     try { 
         const {forDate,movieId,time,seats}=req.body;
         const userId=req.user?._id;
-        const result=await fetchWithRetry(`${process.env.MovieService_Url}/seatbook/removeseats`,{
+        const result=await fetch(`${process.env.MovieService_Url}/seatbook/removeseats`,{
             method:"DELETE",
             headers:{
                 "Content-Type":"application/x-www-form-urlencoded"
