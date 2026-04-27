@@ -4,6 +4,7 @@ import { convertTimeto12 } from '../services/date'
 import {toast} from "react-hot-toast";
 import {motion} from "framer-motion";
 import Spinner from '../component/Spinner';
+import { WakeUp } from '../services/movieservicewakeup';
 interface PropsI{
   setShowAddTime:React.Dispatch<React.SetStateAction<boolean>>,
   movie:currentMoviesI
@@ -38,6 +39,11 @@ const handleSubmit=async ()=>{
 
   };
   setLoading(true);
+   if(!WakeUp()){
+      setLoading(false);
+      toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
+      return;
+    }
   const result=await fetch(`${url}/show/create`,{
     method:"POST",
     headers:{

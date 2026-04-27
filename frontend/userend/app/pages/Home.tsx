@@ -50,14 +50,14 @@ function HomePage({search,setSearch}:SearchI) {
    <div className='flex flex-col gap-4 px-4 pt-2 sm:pt-10 pb-3   '>
     <h1 className='text-[1.3rem] sm:text-[1.4rem] md:text-[1.6rem] lg:text-[1.8rem] font-sans text-gray-900 font-semibold bg-gray-200  rounded-xl px-3'>Movies</h1>
     
-    <motion.div key={movies?.length} variants={container as any} initial="hidden" animate="visible" className='flex flex-row gap-5 shrink-0 flex-wrap w-full   overflow-auto justify-between md:justify-start max-h-[80vh] px-2 py-3'>
+    <motion.div key={movies?.length} variants={container as any} initial="hidden" animate="visible" className='flex flex-row gap-2 sm:gap-5 shrink-0 flex-wrap w-full   overflow-auto justify-between md:justify-start max-h-[80vh] px-2 py-3'>
       {
         movies!==null && !loading && movies.length>0 &&
         movies.map((movie)=>(
-        <motion.div variants={item}  whileHover={{scale:1.03}} transition={{duration:0.15,ease:"easeIn"}} key={movie._id} className='flex flex-col items-center gap-2 w-[40vw] sm:w-[40vw] md:w-[35vw] lg:w-[30vw] xl:w-[25vw] pb-4 bg-gray-50 border-2 rounded-xl hover:drop-shadow-lg hover:drop-shadow-blue-600'>
+        <motion.div variants={item}  whileHover={{scale:1.03}} transition={{duration:0.15,ease:"easeIn"}} key={movie._id} className='flex flex-col items-center gap-2 w-[42vw] sm:w-[40vw] md:w-[35vw] lg:w-[30vw] xl:w-[25vw] pb-4 bg-gray-50 border-2 rounded-xl hover:drop-shadow-lg hover:drop-shadow-blue-600'>
           <img src={movie.coverImage.url}  alt="Failed to Load Cover Image" className='w-full h-[15vh] object-fill rounded-tr-xl rounded-tl-xl' />
           <h1 className='text-[1.2rem] sm:text-[1.5rem] lg:text-[1.7rem] font-sans font-medium text-black text-center'>{movie.name}</h1>
-          <div className='flex flex-col gap-1 items-center text-[0.6rem] sm:text-[0.9rem] lg:text-[1rem] font-sans font-medium '>
+          <div className='flex flex-col gap-1 items-center text-[0.7rem] sm:text-[0.9rem] lg:text-[1rem] font-sans font-medium '>
           <p className='overflow-auto'>{movie.genres}</p>
           <p>{movie.lang}</p>
           </div>

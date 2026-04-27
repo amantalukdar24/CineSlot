@@ -7,6 +7,7 @@ import {motion} from "framer-motion";
 import Spinner from '../component/Spinner';
 import PaymentS from '../component/skeletons/Payment';
 import { AuthUser } from '../services/auth';
+import { WakeUp } from '../services/paymentservicewake';
 function PaymentContent() {
   const AuthService_Url=process.env.NEXT_PUBLIC_AuthSer_URL as string;
   const searchParams=useSearchParams();
@@ -74,6 +75,11 @@ const onPayment=async ():Promise<void>=>{
     if(!movieId || !forDate || !time || !seats) return;
     if(loading) return;
     setLoading(true);
+    if(!WakeUp()){
+      setLoading(false);
+      toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
+      return;
+    }
    const res1=await fetch(`${AuthService_Url}/payment/createorder`,{
     method:"POST",
     headers:{

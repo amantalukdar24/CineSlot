@@ -5,6 +5,7 @@ import Editmovieform from '../component/Editmovieform';
 import { Poppins } from 'next/font/google';
 import MovieDiv from '../component/MovieDiv';
 import {motion,AnimatePresence} from "framer-motion";
+import { WakeUp } from "../services/movieservicewakeup";
 interface currentMoviesI{
   _id:string,producedBy:string,
   name:string,description:string,coverImage:{url:string,publicId:string},dates:{start:Date,end:Date},staffs:{producer:string,director:string,actors:string[],},genres:string,lang:string,duration:string
@@ -24,6 +25,9 @@ function HomePage() {
   const [movieId,setMovieId]=useState<string>("");
   const getMovies=async (type:string):Promise<void>=>{
            if(addForm) return;
+            if(!WakeUp()){
+            return;
+    }
    const result=await fetch(`${url}/movie/getmovies?get=${type}`,{
          method:"GET",
          headers:{

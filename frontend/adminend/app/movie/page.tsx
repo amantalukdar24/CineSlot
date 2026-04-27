@@ -10,6 +10,7 @@ import EditCover from '../component/EditCover';
 import { minutesToHoursAndMinutes } from '../services/date';
 import {motion,AnimatePresence} from "framer-motion";
 import PageLoader from '../component/PageLoader';
+import { WakeUp } from '../services/movieservicewakeup';
 const container={
   hidden:{opacity:0},
   visible:{opacity:1,transition:{staggerChildren:0.2,ease:"linear"}}
@@ -36,6 +37,11 @@ function MovieContent() {
       if(editCover) return;
       if(loading) return;
       setLoading(true);
+      if(!WakeUp()){
+          setLoading(false);
+         toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
+         return;
+    }
           const getMovie=async ():Promise<void>=>{
             const result=await fetch(`${url}/movie/getmovie?id=${id}`,{
                 method:"GET",
@@ -60,6 +66,9 @@ function MovieContent() {
 useEffect(()=>{
  const getShowTimes=async ():Promise<void>=>{
     if(showAddtime || movie===null) return;
+     if(!WakeUp()){
+      return;
+    }
   const result=await fetch(`${url}/show/getshowtime`,{
     method:"POST",
     headers:{

@@ -100,7 +100,7 @@ function Page() {
                  <div className='flex justify-center items-center'>
                   <img src={booking.movie.coverImage.url} className='w-10 h-10 sm:w-12.5 sm:h-12.5 rounded-lg'/>
                  </div>
-                <div className={`flex flex-col gap-2 ${inter.className} text-[0.5rem] sm:text-[0.9rem] md:text-[1rem]`}>
+                <div className={`flex flex-col gap-2 ${inter.className} text-[0.6rem] sm:text-[0.9rem] md:text-[1rem]`}>
                   <h2 className='text-blue-500'>Order id: {booking._id.order_id}</h2>
                   <h2 className='text-red-500'>Movie: {booking.movie.name}</h2>
                   <h2 className='text-green-600'>Show Date: {datetoString(booking.dates.forDate)}</h2>

@@ -6,6 +6,7 @@ import { Poppins,Google_Sans_Code } from "next/font/google";
 import MoreInfo from "./components/moreinfo";
 import PageLoader from "../component/PageLoader";
 import { motion,AnimatePresence } from "framer-motion";
+import { WakeUp } from "../services/movieservicewakeup";
 const poppins=Poppins({
     subsets:["latin"],weight:"400"
 })
@@ -34,6 +35,11 @@ function ShowsContent(){
             return;
         }
         setLoading(true);
+         if(!WakeUp()){
+            setLoading(false);
+            toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
+            return;
+    }
         const result=await fetch(`${AuthService}/bookings/showbookings?movieId=${movieId}&forDate=${forDate}&time=${time}`,{
             method:"GET",
             headers:{

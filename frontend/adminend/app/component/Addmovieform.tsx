@@ -3,6 +3,7 @@ import React,{useRef,useState} from 'react'
 import { toast } from 'react-hot-toast';
 import {motion} from "framer-motion";
 import Spinner from './Spinner';
+import { WakeUp } from '../services/movieservicewakeup';
 interface setProps{
     setAddForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -112,6 +113,11 @@ function Addmovieform({setAddForm}:setProps) {
         formData.append("coverImage",coverImage as File);
         formData.append("dates",dates);
         setLoading(true);
+         if(!WakeUp()){
+         setLoading(false);
+         toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
+         return;
+    }
         const result=await fetch(`${url}/movie/create`,{
             method:"POST",
             headers:{
