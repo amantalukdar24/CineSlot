@@ -1,15 +1,15 @@
 export const fetchWithRetry = async (
     url: string,
     options?: RequestInit,
-    retries = 5,
-    delayMs = 5000
+    retries = 12,
+    delayMs = 8000
 ): Promise<Response> => {
     for (let i = 0; i < retries; i++) {
         try {
             const response = await fetch(url, {
                 ...options,
                 // Ensure we timeout if Render is stuck for too long on a single request
-                signal: AbortSignal.timeout(15000) 
+                signal: AbortSignal.timeout(20000) 
             });
 
             // Check if the response is JSON (Render often returns HTML when spinning up or 502 Bad Gateway)
