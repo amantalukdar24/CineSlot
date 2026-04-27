@@ -1,4 +1,5 @@
 import { Request,Response } from "express";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 import dotenv from "dotenv";
 import amqp from "amqplib";
 import { connectRabbitMQ } from "../amqpConfig";
@@ -8,7 +9,7 @@ dotenv.config();
 const checkValidQueryForPayment=async (req:Request,res:Response):Promise<any>=>{
     try {
         const {forDate,movieId,time,selectedSeats}=req.body;
-        const result=await fetch(`${process.env.MovieService_Url}/payment/checkpaymentquery`,{
+        const result=await fetchWithRetry(`${process.env.MovieService_Url}/payment/checkpaymentquery`,{
             method:"POST",
             headers:{
                  "Content-Type":"application/x-www-form-urlencoded",
@@ -28,7 +29,7 @@ const checkValidQueryForPayment=async (req:Request,res:Response):Promise<any>=>{
 const createOrder=async (req:Request,res:Response):Promise<any>=>{
     try {
         const {selectedSeats}=req.body;
-        const result=await fetch(`${process.env.PaymentService_Url}/payment/createorder`,{
+        const result=await fetchWithRetry(`${process.env.PaymentService_Url}/payment/createorder`,{
             method:"POST",
             headers:{
                 "Content-Type":"application/x-www-form-urlencoded",
@@ -47,7 +48,7 @@ const verifyPayment=async (req:Request,res:Response):Promise<any>=>{
     try {
     
         const {selectedSeats,forDate,movieId,time,order_id,payment_id,signature}=req.body;
-        const resVP=await fetch(`${process.env.PaymentService_Url}/payment/verifypayment`,{
+        const resVP=await fetchWithRetry(`${process.env.PaymentService_Url}/payment/verifypayment`,{
             method:"POST",
             headers:{
                 "Content-Type":"application/x-www-form-urlencoded",
@@ -59,7 +60,7 @@ const verifyPayment=async (req:Request,res:Response):Promise<any>=>{
         if(!dataVP.success) return res.status(resVP.status).json(dataVP);
         if(dataVP.success){
             const bookedUser=req.user?._id;
-             const resMS=await fetch(`${process.env.MovieService_Url}/seatbook/create`,{
+             const resMS=await fetchWithRetry(`${process.env.MovieService_Url}/seatbook/create`,{
             method:"POST",
             headers:{
                 "Content-Type":"application/x-www-form-urlencoded",
@@ -99,7 +100,7 @@ const verifyPayment=async (req:Request,res:Response):Promise<any>=>{
 const paymentSuccessInfo=async (req:Request,res:Response):Promise<any>=>{
     try {
         const {movieId,payment_id}=req.body;
-        const result=await fetch(`${process.env.MovieService_Url}/payment/paymentsuccess`,{
+        const result=await fetchWithRetry(`${process.env.MovieService_Url}/payment/paymentsuccess`,{
             method:"POST",
             headers:{
                 "Content-Type":"application/x-www-form-urlencoded",

@@ -1,10 +1,11 @@
 import {Request,Response} from "express";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 import dotenv from "dotenv";
 dotenv.config();
 const registerShow=async (req:Request,res:Response):Promise<any>=>{
 try {
      
-    const result=await fetch(`${process.env.MovieService_Url}/show/create`,{
+    const result=await fetchWithRetry(`${process.env.MovieService_Url}/show/create`,{
         method:"POST",
         headers:{
             "Content-Type":"application/x-www-form-urlencoded",
@@ -23,7 +24,7 @@ const getShowsTime=async (req:Request,res:Response):Promise<any>=>{
  try {
     
     const {movieId}=req.body;
-    const result=await fetch(`${process.env.MovieService_Url}/show/getshowtime`,{
+    const result=await fetchWithRetry(`${process.env.MovieService_Url}/show/getshowtime`,{
         method:"POST",
         headers:{
             "Content-Type":"application/x-www-form-urlencoded",

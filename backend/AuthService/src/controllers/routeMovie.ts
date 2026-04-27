@@ -1,4 +1,5 @@
 import { Request,Response } from "express";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 import dotenv from "dotenv";
 import {v2 as cloudinary} from "cloudinary";
 dotenv.config();
@@ -27,7 +28,7 @@ const routeCreate=async (req:Request,res:Response):Promise<any>=>{
         
        }
        
-       const result=await fetch(`${process.env.MovieService_Url}/movie/create`,{
+       const result=await fetchWithRetry(`${process.env.MovieService_Url}/movie/create`,{
         method:"POST",
         headers:{
             "Content-Type":"application/x-www-form-urlencoded",
@@ -56,7 +57,7 @@ const routeUpdate=async (req:Request,res:Response):Promise<any>=>{
         dates,
         movieId
        }
-       const result=await fetch(`${process.env.MovieService_Url}/movie/edit`,{
+       const result=await fetchWithRetry(`${process.env.MovieService_Url}/movie/edit`,{
         method:"PATCH",
         headers:{
             "Content-Type":"application/x-www-form-urlencoded",
@@ -76,7 +77,7 @@ const routeUpdate=async (req:Request,res:Response):Promise<any>=>{
 const routeEditCoverImage=async (req:Request,res:Response):Promise<any>=>{
     try {
         const {movieId}=req.body;
-       const result=await fetch(`${process.env.MovieService_Url}/movie/editcover`,{
+       const result=await fetchWithRetry(`${process.env.MovieService_Url}/movie/editcover`,{
         method:"PATCH",
         headers:{
             "Content-Type":"application/x-www-form-urlencoded",
@@ -99,7 +100,7 @@ const routeEditCoverImage=async (req:Request,res:Response):Promise<any>=>{
 
 const routeGetMovies=async (req:Request,res:Response):Promise<any>=>{
  try {
-    const result=await fetch(`${process.env.MovieService_Url}/movie/getmovies?get=${req.query.get}`,{
+    const result=await fetchWithRetry(`${process.env.MovieService_Url}/movie/getmovies?get=${req.query.get}`,{
         method:"GET",
         headers:{
             "Content-Type":"application/json"
@@ -115,7 +116,7 @@ const routeGetMovies=async (req:Request,res:Response):Promise<any>=>{
 const routeGetMovie=async (req:Request,res:Response):Promise<any>=>{
     try {
         const {id}=req.query;
-        const result=await fetch(`${process.env.MovieService_Url}/movie/getmovie?id=${id}`,{
+        const result=await fetchWithRetry(`${process.env.MovieService_Url}/movie/getmovie?id=${id}`,{
             method:"GET",
             headers:{
                 "Content-Type":"application/json"

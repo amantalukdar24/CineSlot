@@ -1,11 +1,12 @@
 import {Request,Response} from "express";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 import dotenv from "dotenv";
 dotenv.config();
 
 const getBookings=async (req:Request,res:Response):Promise<any>=>{
    try {
        const {skip}=req.query;
-       const result=await fetch(`${process.env.MovieService_Url}/bookings/userbooking?skip=${skip}&userId=${req.user?._id}`,{
+       const result=await fetchWithRetry(`${process.env.MovieService_Url}/bookings/userbooking?skip=${skip}&userId=${req.user?._id}`,{
         method:"GET",
         headers:{
             "Content-Type":"application/json"
@@ -22,7 +23,7 @@ const getBookings=async (req:Request,res:Response):Promise<any>=>{
 const getBookDetailsForShow=async (req:Request,res:Response):Promise<any>=>{
     try {
         const {movieId,forDate,time}=req.query;
-        const result=await fetch(`${process.env.MovieService_Url}/bookings/showbookings?movieId=${movieId}&forDate=${forDate}&time=${time}`,{
+        const result=await fetchWithRetry(`${process.env.MovieService_Url}/bookings/showbookings?movieId=${movieId}&forDate=${forDate}&time=${time}`,{
             method:"GET",
             headers:{
                 "Content-Type":"application/json"
@@ -38,7 +39,7 @@ const getBookDetailsForShow=async (req:Request,res:Response):Promise<any>=>{
 const cancelBookings=async (req:Request,res:Response):Promise<any>=>{
     try{
        const {paymentDetails}=req.body;
-       const result=await fetch(`${process.env.MovieService_Url}/bookings/cancelbooking`,{
+       const result=await fetchWithRetry(`${process.env.MovieService_Url}/bookings/cancelbooking`,{
         method:"PATCH",
         headers:{
             "Content-Type":"application/x-www-form-urlencoded"
