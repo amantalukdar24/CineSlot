@@ -37,12 +37,12 @@ function MovieContent() {
       if(editCover) return;
       if(loading) return;
       setLoading(true);
-      if(!WakeUp()){
-          setLoading(false);
-         toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
-         return;
+     const getMovie=async ():Promise<void>=>{
+             if(!(await WakeUp())){
+                  setLoading(false);
+              toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
+              return;
     }
-          const getMovie=async ():Promise<void>=>{
             const result=await fetch(`${url}/movie/getmovie?id=${id}`,{
                 method:"GET",
                 headers:{
@@ -66,7 +66,7 @@ function MovieContent() {
 useEffect(()=>{
  const getShowTimes=async ():Promise<void>=>{
     if(showAddtime || movie===null) return;
-     if(!WakeUp()){
+     if(!(await WakeUp())){
       return;
     }
   const result=await fetch(`${url}/show/getshowtime`,{

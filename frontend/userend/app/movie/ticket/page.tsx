@@ -30,9 +30,6 @@ function TicketContent() {
    const [loading,setLoading]=useState<boolean>(false);
      const id=searchparams.get("id");
      useEffect(()=>{
-      if(!AuthUser()) router.push("/signin");
-     },[])
-  useEffect(()=>{
     if(!id) {
       toast.error("No Movies Found");
       router.push("/");
@@ -94,7 +91,10 @@ const selected = showsTimes?.find(ele => ele._id === currentClickedDay);
   },[selectSeats])
  const handleCheckSeat=async ():Promise<void>=>{
   if(id===null) return;
-  if(!localStorage.getItem("token")) return;
+  if(!localStorage.getItem("token")) {
+    router.push("/signin");
+    return;
+  }
   const seats:string[]=selectSeats.map((ele)=>ele.seatNo);
   const result=await fetch(`${AuthService_Url}/seatbook/checkseat`,{
     method:"POST",

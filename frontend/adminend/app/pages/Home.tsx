@@ -25,7 +25,7 @@ function HomePage() {
   const [movieId,setMovieId]=useState<string>("");
   const getMovies=async (type:string):Promise<void>=>{
            if(addForm) return;
-            if(!WakeUp()){
+            if(!(await WakeUp())){
             return;
     }
    const result=await fetch(`${url}/movie/getmovies?get=${type}`,{

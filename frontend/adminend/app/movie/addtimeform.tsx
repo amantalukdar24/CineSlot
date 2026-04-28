@@ -39,7 +39,7 @@ const handleSubmit=async ()=>{
 
   };
   setLoading(true);
-   if(!WakeUp()){
+   if(!(await WakeUp())){
       setLoading(false);
       toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
       return;

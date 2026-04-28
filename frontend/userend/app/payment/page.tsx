@@ -75,11 +75,12 @@ const onPayment=async ():Promise<void>=>{
     if(!movieId || !forDate || !time || !seats) return;
     if(loading) return;
     setLoading(true);
-    if(!WakeUp()){
+    if(!(await WakeUp())){
       setLoading(false);
       toast("Opps! Try Again",{icon:"😮‍💨", style:{color:"orangered",backgroundColor:"black"}});
       return;
     }
+    else{
    const res1=await fetch(`${AuthService_Url}/payment/createorder`,{
     method:"POST",
     headers:{
@@ -122,6 +123,8 @@ const onPayment=async ():Promise<void>=>{
    }
    else toast.error("Payment Unsuccessful")
    setLoading(false);
+   
+  }
 }
 useEffect(()=>{
 loadScript("https://checkout.razorpay.com/v1/checkout.js");
