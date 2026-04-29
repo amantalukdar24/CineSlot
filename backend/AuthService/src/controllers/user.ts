@@ -52,7 +52,12 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
       otp+=Math.floor(Math.random()*10);
     }
     const transporter=nodemailer.createTransport({
-        service:"gmail",
+        host:"smtp.gmail.com",
+        port:587,
+        secure:false,
+        requireTLS:true,
+        logger:true,
+        debug:true,
         auth:{
             user:process.env.NM_email,
             pass:process.env.NM_pass
