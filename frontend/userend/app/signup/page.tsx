@@ -48,6 +48,7 @@ function Signup() {
    
     if(email==="") return;
  if(step===1) setStep(step+1);
+ setTimer(30);
   const result=await fetch(`${url}/user/getotp`,{
       method:"POST",headers:{
         "Content-Type":"application/x-www-form-urlencoded",

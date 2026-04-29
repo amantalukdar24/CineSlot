@@ -6,6 +6,7 @@ import { Poppins } from 'next/font/google';
 import MovieDiv from '../component/MovieDiv';
 import {motion,AnimatePresence} from "framer-motion";
 import { WakeUp } from "../services/movieservicewakeup";
+import { AuthUser } from '../services/auth';
 interface currentMoviesI{
   _id:string,producedBy:string,
   name:string,description:string,coverImage:{url:string,publicId:string},dates:{start:Date,end:Date},staffs:{producer:string,director:string,actors:string[],},genres:string,lang:string,duration:string
@@ -23,6 +24,11 @@ function HomePage() {
   const [completeMovies,setCompleteMovies]=useState<currentMoviesI[]>([]);
   const [editForm,setEditForm]=useState<boolean>(false);
   const [movieId,setMovieId]=useState<string>("");
+   const [auth,setAuth]=useState<boolean>(false);
+  useEffect(()=>{
+     setAuth(AuthUser());
+  },[auth])
+  
   const getMovies=async (type:string):Promise<void>=>{
            if(addForm) return;
             if(!(await WakeUp())){
@@ -55,7 +61,7 @@ function HomePage() {
         <div className='flex flex-col w-full gap-4'>
           <div className='w-full flex flex-col sm:flex-row justify-between sm:items-center border-2 bg-gray-100 rounded-xl px-2 py-3  gap-3 sm:gap-0'>
            <h1 className={`${poppins.className} text-[1.1rem] lg:text-[1.3rem]  `}>Ongoing & Upcoming movies</h1>
-           <motion.button whileTap={{scale:0.8}} transition={{duration:0.15,ease:"easeIn"}}  className='w-[40vw] sm:w-[30vw] md:w-[20vw] lg:w-[15vw] h-[6vh] md:h-[5vh] lg:h-[5vh] xl:h-[3vw] bg-gray-900 rounded-xl text-white text-[1.1rem] md:text-[1.2rem] cursor-pointer' onClick={(e:any)=>{setTimeout(()=>{setAddForm(true)},180)}}>Add New Movie</motion.button>
+          {auth && <motion.button whileTap={{scale:0.8}} transition={{duration:0.15,ease:"easeIn"}}  className='w-[40vw] sm:w-[30vw] md:w-[20vw] lg:w-[15vw] h-[6vh] md:h-[5vh] lg:h-[5vh] xl:h-[3vw] bg-gray-900 rounded-xl text-white text-[1.1rem] md:text-[1.2rem] cursor-pointer' onClick={(e:any)=>{setTimeout(()=>{setAddForm(true)},180)}}>Add New Movie</motion.button>}
          <AnimatePresence> {addForm && <Addmovieform setAddForm={setAddForm} />}</AnimatePresence> 
            <AnimatePresence>{editForm && <Editmovieform setEditForm={setEditForm} movieId={movieId}/>}</AnimatePresence>
           </div>

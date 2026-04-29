@@ -56,7 +56,6 @@ function Signup() {
     
     if(email==="") return;
  if(step===1) setStep(step+1);
-
   setTimer(30);
     const result=await fetch(`${url}/admin/getotp`,{
       method:"POST",headers:{
