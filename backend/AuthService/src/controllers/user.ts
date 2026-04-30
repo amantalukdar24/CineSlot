@@ -9,10 +9,10 @@ dotenv.config();
 const registerUser=async (req:Request,res:Response):Promise<any>=>{
     try{
     const {name,email,finalOtp}=req.body;
-    const existEmail=await USER.findOne({email});
+    const existEmail=await USER.findOne({email:email.toLowerCase()});
     if(existEmail) return res.status(409).json({success:false,mssg:"Email Exist"});
     
-    const otpMatch=await OTP.findOne({email});
+    const otpMatch=await OTP.findOne({email:email.toLowerCase()});
    
     if(!otpMatch) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
     const hashOtp=await bycrpt.compare(finalOtp,otpMatch.otp);
@@ -20,11 +20,11 @@ const registerUser=async (req:Request,res:Response):Promise<any>=>{
     if(!hashOtp) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
     const user=await USER.create({
         name,
-        email
+        email:email.toLowerCase()
     });
     if(user){
         const token:string=await jwt.sign({_id:user._id,name:user.name,email:user.email},process.env.JWT_KEY as string);
-         await OTP.findOneAndDelete({email});
+         await OTP.findOneAndDelete({email:email.toLowerCase()});
          return res.status(201).json({success:true,mssg:"Account Created",token});
     }
     else return res.status(404).json({success:false,mssg:"Something Went Wrong"});
@@ -38,13 +38,13 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
     try {
       
         const {email,mode}=req.body;
-
+        
         if(mode==="signin"){
-            const existEmail=await USER.findOne({email});
+            const existEmail=await USER.findOne({email:email.toLowerCase()});
     if(!existEmail) return res.status(409).json({success:false,mssg:"User didn't Exist Signup"});
         }
             if(mode==="signup"){
-            const existEmail=await USER.findOne({email});
+            const existEmail=await USER.findOne({email:email.toLowerCase()});
     if(existEmail) return res.status(409).json({success:false,mssg:"User Exist Signin"});
         }
     let otp:string="";
@@ -52,12 +52,10 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
       otp+=Math.floor(Math.random()*10);
     }
     const transporter=nodemailer.createTransport({
-        host:"smtp.gmail.com",
-        port:587,
-        secure:false,
-        requireTLS:true,
-        logger:true,
-        debug:true,
+        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
         auth:{
             user:process.env.NM_email,
             pass:process.env.NM_pass
@@ -65,7 +63,7 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
     });
     const mailOptions = {
   from: process.env.NM_email,
-  to:email,
+  to:email.toLowerCase(),
   subject: "CineSlot | Email Verification OTP",
   html: `
   <div style="max-width:600px; margin:0 auto; padding:20px; font-family:Arial, sans-serif; background-color:#f9f9f9;">
@@ -120,7 +118,7 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
   await  transporter.sendMail(mailOptions);
 
     const hashedOtp:string=await bycrpt.hash(otp,10);
-    const existOtp=await OTP.findOne({email});
+    const existOtp=await OTP.findOne({email:email.toLowerCase()});
     if(existOtp){
          const result=await OTP.findByIdAndUpdate(existOtp._id,{
             otp:hashedOtp
@@ -129,7 +127,7 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
     }
     else{
         const result=await OTP.create({
-            email,
+            email:email.toLowerCase(),
             otp:hashedOtp
         });
 if(result) return res.status(201).json({success:true,mssg:"Otp has been sent to your email"});
@@ -146,15 +144,15 @@ const loginUser=async (req:Request,res:Response):Promise<any>=>{
     try {
          const {email,finalOtp}=req.body;
      
-    const user=await USER.findOne({email});
+    const user=await USER.findOne({email:email.toLowerCase()});
     if(!user) return res.status(409).json({success:false,mssg:"User didn't Exist Signup"});
-     const otpMatch=await OTP.findOne({email});
+     const otpMatch=await OTP.findOne({email:email.toLowerCase()});
     if(!otpMatch) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
     const hashOtp=await bycrpt.compare(finalOtp,otpMatch.otp);
     if(!hashOtp) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
     const token=await jwt.sign({_id:user._id,name:user.name,email:user.email},process.env.JWT_KEY as string);
     if(token){
-    await OTP.deleteOne({email});
+    await OTP.deleteOne({email:email.toLowerCase()});
     return res.status(200).json({success:true,mssg:"Welcome Back!",token});
     }
     return res.status(404).json({success:false,mssg:"Something went wrong"});

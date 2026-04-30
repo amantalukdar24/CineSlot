@@ -10,9 +10,9 @@ dotenv.config();
 const registerAdmin=async (req:Request,res:Response)=>{
     try{
           const {name,email,address,finalOtp} =req.body;
-           const existEmail=await ADMIN.findOne({email});
+           const existEmail=await ADMIN.findOne({email:email.toLowerCase()});
            if(existEmail) return res.status(409).json({success:false,mssg:"Email Exist"});
-           const otpMatch=await OTP.findOne({email});
+           const otpMatch=await OTP.findOne({email:email.toLowerCase()});
          if(!otpMatch) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
             const hashOtp=await bcrypt.compare(finalOtp,otpMatch.otp);
             
@@ -20,13 +20,13 @@ const registerAdmin=async (req:Request,res:Response)=>{
              
             const admin=await ADMIN.create({
                 name,
-                email,
+                email:email.toLowerCase(),
                address:JSON.parse(address)
             });
          if(admin) {
             
             const token=await jwt.sign({_id:admin._id,name:admin.name,email:admin.email,address:admin.address},process.env.JWT_KEY as string);
-             await OTP.findOneAndDelete({email});
+             await OTP.findOneAndDelete({email:email.toLowerCase()});
             return res.status(201).json({success:true,mssg:"Admin Account Created",token});
          }
          return res.status(400).json({success:false,mssg:"Something went wrong"});
@@ -44,11 +44,11 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
         const {email,mode}=req.body;
 
         if(mode==="signin"){
-            const existEmail=await ADMIN.findOne({email});
+            const existEmail=await ADMIN.findOne({email:email.toLowerCase()});
     if(!existEmail) return res.status(409).json({success:false,mssg:"Admin's Email didn't Exist Signup"});
         }
             if(mode==="signup"){
-            const existEmail=await ADMIN.findOne({email});
+            const existEmail=await ADMIN.findOne({email:email.toLowerCase()});
     if(existEmail) return res.status(409).json({success:false,mssg:"Admin's Email Exist Signin"});
         }
     let otp:string="";
@@ -56,12 +56,10 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
       otp+=Math.floor(Math.random()*10);
     }
     const transporter=nodemailer.createTransport({
-        host:"smtp.gmail.com",
-        port:587,
-        secure:false,
-        requireTLS:true,
-        logger:true,
-        debug:true,
+        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
         auth:{
             user:process.env.NM_email,
             pass:process.env.NM_pass
@@ -69,7 +67,7 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
     });
     const mailOptions = {
   from: process.env.NM_email,
-  to:email,
+  to:email.toLowerCase(),
   subject: "CineSlot-For Staffs | Email Verification OTP",
   html: `
   <div style="max-width:600px; margin:0 auto; padding:20px; font-family:Arial, sans-serif; background-color:#f9f9f9;">
@@ -124,7 +122,7 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
   await  transporter.sendMail(mailOptions);
 
     const hashedOtp:string=await bcrypt.hash(otp,10);
-    const existOtp=await OTP.findOne({email});
+    const existOtp=await OTP.findOne({email:email.toLowerCase()});
     if(existOtp){
          const result=await OTP.findByIdAndUpdate(existOtp._id,{
             otp:hashedOtp
@@ -133,7 +131,7 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
     }
     else{
         const result=await OTP.create({
-            email,
+            email:email.toLowerCase(),
             otp:hashedOtp
         });
 if(result) return res.status(201).json({success:true,mssg:"Otp has been sent to your email"});
@@ -150,15 +148,15 @@ const loginAdmin=async (req:Request,res:Response):Promise<any>=>{
     try {
          const {email,finalOtp}=req.body;
      
-    const admin=await ADMIN.findOne({email});
+    const admin=await ADMIN.findOne({email:email.toLowerCase()});
     if(!admin) return res.status(409).json({success:false,mssg:"Admin's Email didn't Exist Signup"});
-     const otpMatch=await OTP.findOne({email});
+     const otpMatch=await OTP.findOne({email:email.toLowerCase()});
     if(!otpMatch) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
     const hashOtp=await bcrypt.compare(finalOtp,otpMatch.otp);
     if(!hashOtp) return res.status(400).json({success:false,mssg:"Incorrect Otp"});
     const token=await jwt.sign({_id:admin._id,name:admin.name,email:admin.email,address:admin.address},process.env.JWT_KEY as string);
     if(token){
-    await OTP.deleteOne({email});
+    await OTP.deleteOne({email:email.toLowerCase()});
     return res.status(200).json({success:true,mssg:"Welcome Back!",token});
     }
     return res.status(404).json({success:false,mssg:"Something went wrong"});
