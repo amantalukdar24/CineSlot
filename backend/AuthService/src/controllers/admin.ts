@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import bcrypt    from "bcrypt";
 import nodemailer from "nodemailer";
 import { Request,Response } from "express";
+import {sendMail} from "../services/sendMail";
 dotenv.config();
 
 const registerAdmin=async (req:Request,res:Response)=>{
@@ -55,72 +56,8 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
     for(let i=0;i<4;i++){
       otp+=Math.floor(Math.random()*10);
     }
-    const transporter=nodemailer.createTransport({
-        service: "gmail",
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-        auth:{
-            user:process.env.NM_email,
-            pass:process.env.NM_pass
-        }
-    });
-    const mailOptions = {
-  from: process.env.NM_email,
-  to:email.toLowerCase(),
-  subject: "CineSlot-For Staffs | Email Verification OTP",
-  html: `
-  <div style="max-width:600px; margin:0 auto; padding:20px; font-family:Arial, sans-serif; background-color:#f9f9f9;">
-    
-    <h1 style="color:orangered; text-align:center;">
-      🎬 Welcome to CineSlot!
-    </h1>
-
-    <p style="font-size:16px; color:#333;">
-      Hi there,
-    </p>
-
-    <p style="font-size:16px; color:#333;">
-      Thank you for signing up on <strong>CineSlot</strong>.  
-      Please use the OTP below to verify your email address.
-    </p>
-
-    <div style="margin:30px 0; text-align:center;">
-      <span style="
-        display:inline-block;
-        padding:15px 30px;
-        font-size:24px;
-        letter-spacing:5px;
-        font-weight:bold;
-        background-color:#fff;
-        color:#000;
-        border:2px dashed orangered;
-        border-radius:8px;
-      ">
-        ${otp}
-      </span>
-    </div>
-
-    <p style="font-size:14px; color:#555;">
-      This OTP is valid for <strong>10 minutes</strong>.  
-      Do not share it with anyone.
-    </p>
-
-    <p style="font-size:14px; color:#555;">
-      If you didn’t request this, you can safely ignore this email.
-    </p>
-
-    <hr style="margin:30px 0;" />
-
-    <p style="font-size:12px; color:#999; text-align:center;">
-      © ${new Date().getFullYear()} CineSlot. All rights reserved.
-    </p>
-  </div>
-  `
-};
-
-  await  transporter.sendMail(mailOptions);
-
+    const isMailSend=await sendMail(email.toLowerCase(),otp,true);
+    if(!isMailSend) return res.status(400).json({success:false,mssg:"Something Went Wrong, Try Again"});
     const hashedOtp:string=await bcrypt.hash(otp,10);
     const existOtp=await OTP.findOne({email:email.toLowerCase()});
     if(existOtp){
