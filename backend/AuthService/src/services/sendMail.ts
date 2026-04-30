@@ -58,7 +58,10 @@ const sendMail=async (email:string,otp:string,admin:boolean):Promise<boolean>=>{
   </div>
   `
         });
-    if(error) return false;
+    if(error) {
+        console.log(error);
+        return false;
+    }
     return true;
     } catch (err) {
         console.log(`${err}`);
