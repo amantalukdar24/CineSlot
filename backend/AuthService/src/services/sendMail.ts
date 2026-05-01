@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const resend=new Resend(process.env.resend_key as string);
 
-const sendMail=async (email:string,otp:string,admin:boolean):Promise<boolean>=>{
+const sendMail=async (email:string,otp:string,admin:boolean,mode:string):Promise<boolean>=>{
     try {
         const {data,error}=await resend.emails.send({
             from:process.env.resend_email as string,
@@ -21,7 +21,7 @@ const sendMail=async (email:string,otp:string,admin:boolean):Promise<boolean>=>{
     </p>
 
     <p style="font-size:16px; color:#333;">
-      Thank you for signing up on <strong>CineSlot</strong>.  
+      Thank you for signing ${mode==="signin" ? "in" : "up"} on <strong>CineSlot</strong>.  
       Please use the OTP below to verify your email address.
     </p>
 

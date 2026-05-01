@@ -1,9 +1,9 @@
-
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { datetoString } from "./date";
 import { connectRabbitMQ } from "../amqpConfig";
 import dotenv from "dotenv";
 dotenv.config();
+const resend=new Resend(process.env.resend_key as string);
 function HtmlMaker(Mssg:any):string{
 return `
 <!DOCTYPE html>
@@ -91,14 +91,6 @@ return `
 }
 async function sendMail(){
     try {
-        const transporter=nodemailer.createTransport({
-        service:"gmail",
-        auth:{
-            user:process.env.NM_email,
-            pass:process.env.NM_pass
-        }
-    });
-      
         const channel=await connectRabbitMQ();
         if(!channel) return;
         channel.prefetch(1);
@@ -107,13 +99,13 @@ async function sendMail(){
             if(mssg!==null){
              const parsedMssg=JSON.parse(mssg.content as any);
              const html=HtmlMaker(parsedMssg);
-             const mailOptions={
-                from:process.env.NM_email,
+             const {data,error}=await resend.emails.send({
+                from:process.env.resend_email as string,
                 to:parsedMssg.to,
                 subject:"CineSlot | Booking Confirmed",
                 html:html
-             }
-             await transporter.sendMail(mailOptions);
+             });
+                if(error) console.log(error);
                 channel.ack(mssg);
             }
         })

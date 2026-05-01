@@ -46,7 +46,7 @@ CineSlot is a modern, full-stack movie ticket booking platform built with a micr
 - JSON Web Tokens (JWT)
 - Cloudinary (Image storage)
 - Razorpay (Payment gateway)
-- Nodemailer (Email notifications)
+- Resend (Email notifications)
 
 ---
 

@@ -21,9 +21,9 @@
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "mongoose": "^9.1.6",
-    "nodemailer": "^8.0.1",
     "nodemon": "^3.1.11",
     "razorpay": "^2.9.6",
+    "resend": "^6.12.2",
     "typescript": "^5.9.3"
   },
   "devDependencies": {

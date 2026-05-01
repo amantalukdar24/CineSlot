@@ -52,7 +52,7 @@ const getOtp=async (req:Request,res:Response):Promise<any>=>{
     for(let i=0;i<4;i++){
       otp+=Math.floor(Math.random()*10);
     }
-    const isMailSend=await sendMail(email.toLowerCase(),otp,false);
+    const isMailSend=await sendMail(email.toLowerCase(),otp,false,mode);
     if(!isMailSend) return res.status(400).json({success:false,mssg:"Something Went Wrong, Try Again"});
     const hashedOtp:string=await bycrpt.hash(otp,10);
     const existOtp=await OTP.findOne({email:email.toLowerCase()});
