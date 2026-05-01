@@ -1,9 +1,8 @@
-import { Resend } from "resend";
 import { datetoString } from "./date";
 import { connectRabbitMQ } from "../amqpConfig";
 import dotenv from "dotenv";
 dotenv.config();
-const resend=new Resend(process.env.resend_key as string);
+
 function HtmlMaker(Mssg:any):string{
 return `
 <!DOCTYPE html>
