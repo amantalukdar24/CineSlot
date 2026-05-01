@@ -88,8 +88,9 @@ return `
 </body>
 </html>
 `;
+      
 }
-async function sendMail(){
+async function sendMail():Promise<void>{
     try {
         const channel=await connectRabbitMQ();
         if(!channel) return;
@@ -99,14 +100,34 @@ async function sendMail(){
             if(mssg!==null){
              const parsedMssg=JSON.parse(mssg.content as any);
              const html=HtmlMaker(parsedMssg);
-             const {data,error}=await resend.emails.send({
-                from:process.env.resend_email as string,
-                to:parsedMssg.to,
-                subject:"CineSlot | Booking Confirmed",
-                html:html
-             });
-                if(error) console.log(error);
-                channel.ack(mssg);
+             const result=await fetch("https://api.brevo.com/v3/smtp/email", {
+  method: "POST",
+  headers: {
+    "accept": "application/json",
+    "api-key": process.env.brevo_api_key as string,
+    "content-type": "application/json"
+  },
+  body: JSON.stringify({
+    sender: {
+      email: process.env.brevo_email,
+      name: "CineSlot"
+    },
+    to: [
+      {
+        email:parsedMssg.to,
+        name: "User"
+      }
+    ],
+    subject: "CineSlot-Booking Confirmed",
+    htmlContent: html
+  })
+});
+   const data=await result.json();
+   if(!result.ok){
+    console.log(data);
+   
+   }
+      channel.ack(mssg);
             }
         })
     } catch (err) {

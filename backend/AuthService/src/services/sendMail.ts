@@ -1,15 +1,10 @@
-import {Resend} from "resend";
 import dotenv from "dotenv";
 dotenv.config();
-const resend=new Resend(process.env.resend_key as string);
 
 const sendMail=async (email:string,otp:string,admin:boolean,mode:string):Promise<boolean>=>{
     try {
-        const {data,error}=await resend.emails.send({
-            from:process.env.resend_email as string,
-            to:email,
-            subject:admin ? "CineSlot-For Staffs | Email Verification OTP" : "CineSlot | Email Verification OTP",
-            html: `
+           const  subject=admin ? "CineSlot-For Staffs | Email Verification OTP" : "CineSlot | Email Verification OTP";
+           const html= `
   <div style="max-width:600px; margin:0 auto; padding:20px; font-family:Arial, sans-serif; background-color:#f9f9f9;">
     
     <h1 style="color:orangered; text-align:center;">
@@ -56,12 +51,34 @@ const sendMail=async (email:string,otp:string,admin:boolean,mode:string):Promise
       © ${new Date().getFullYear()} CineSlot. All rights reserved.
     </p>
   </div>
-  `
-        });
-    if(error) {
-        console.log(error);
-        return false;
-    }
+  `;
+   const result=await fetch("https://api.brevo.com/v3/smtp/email", {
+  method: "POST",
+  headers: {
+    "accept": "application/json",
+    "api-key": process.env.brevo_api_key as string,
+    "content-type": "application/json"
+  },
+  body: JSON.stringify({
+    sender: {
+      email: process.env.brevo_email,
+      name: "CineSlot"
+    },
+    to: [
+      {
+        email:email,
+        name: "User"
+      }
+    ],
+    subject: subject,
+    htmlContent: html
+  })
+});
+   const data=await result.json();
+   if(!result.ok){
+    console.log(data);
+    return false;
+   }
     return true;
     } catch (err) {
         console.log(`${err}`);
